@@ -3,7 +3,7 @@
   "short_name": "Vivá",
   "description": "Todos os seus treinos e a sua alimentação num só lugar. Acesso vitalício.",
   "lang": "pt-BR",
-  "start_url": "/app",
+  "start_url": "/inicio",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
