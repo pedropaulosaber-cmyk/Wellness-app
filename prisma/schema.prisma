@@ -36,8 +36,8 @@ enum Objetivo {
 
 /// Espelha o usuário do Supabase Auth (id = auth.users.id).
 model Usuario {
-  id    String @id @db.Uuid // = auth.uid()
-  email String @unique
+  id    String  @id @db.Uuid // = auth.uid()
+  email String  @unique
   nome  String?
 
   // Modelo de negócio: pagamento ÚNICO de R$ 449,90 = acesso vitalício.
@@ -45,8 +45,10 @@ model Usuario {
   acessoVitalicio Boolean   @default(false)
   compraEm        DateTime?
 
-  perfil  Perfil?
-  criadoEm DateTime @default(now())
+  perfil    Perfil?
+  registros RegistroAlimentar[]
+  aguas     RegistroAgua[]
+  criadoEm  DateTime            @default(now())
 
   @@map("usuarios")
 }
@@ -67,10 +69,10 @@ model Perfil {
   objetivo       Objetivo
 
   // Anamnese aprofundada (fundador é fisioterapeuta — lesões importam)
-  rotinaTrabalho   String? // ex.: "escritório 8h", "operacional em pé"
-  horasSono        Float? // média por noite
-  qualidadeSono    Int? // 1–5
-  lesoes           String? // texto livre / limitações
+  rotinaTrabalho    String? // ex.: "escritório 8h", "operacional em pé"
+  horasSono         Float? // média por noite
+  qualidadeSono     Int? // 1–5
+  lesoes            String? // texto livre / limitações
   experienciaTreino String? // iniciante | intermediario | avancado
 
   // Modalidades escolhidas (ex.: ["musculacao","corrida"])
@@ -78,13 +80,50 @@ model Perfil {
   restricoes  String[] // alimentares
 
   // Snapshot do plano calculado (recalculado quando muda peso/objetivo/rotina)
-  caloriasAlvo  Int?
-  proteinaG     Int?
-  carboidratoG  Int?
-  gorduraG      Int?
-  aguaMl        Int?
+  caloriasAlvo Int?
+  proteinaG    Int?
+  carboidratoG Int?
+  gorduraG     Int?
+  aguaMl       Int?
 
   atualizadoEm DateTime @default(now()) @updatedAt
 
   @@map("perfis")
+}
+
+// ── Registro alimentar e hidratação ──────────────────────────
+// IMPORTANTE: como o acesso aos dados é via Prisma (conexão privilegiada que
+// ignora RLS), o ISOLAMENTO entre contas é garantido na APLICAÇÃO — toda query
+// filtra por usuarioId. Ver prisma/rls.sql para defesa em profundidade.
+
+model RegistroAlimentar {
+  id        String  @id @default(uuid()) @db.Uuid
+  usuarioId String  @db.Uuid
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  dia      String // YYYY-MM-DD (fuso America/Sao_Paulo)
+  refeicao String // cafe | almoco | lanche | pre_treino | jantar | avulso
+  nome     String
+  gramas   Int
+  kcal     Int
+  proteina Int
+  carbo    Int
+  gordura  Int
+  criadoEm DateTime @default(now())
+
+  @@index([usuarioId, dia])
+  @@map("registros_alimentares")
+}
+
+model RegistroAgua {
+  id        String  @id @default(uuid()) @db.Uuid
+  usuarioId String  @db.Uuid
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  dia      String
+  ml       Int
+  criadoEm DateTime @default(now())
+
+  @@index([usuarioId, dia])
+  @@map("registros_agua")
 }

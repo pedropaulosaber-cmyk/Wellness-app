@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireAcesso } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getHoje } from "@/lib/datas";
 import ProgressRing from "@/components/ProgressRing";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +11,18 @@ export default async function InicioPage() {
   const perfil = await prisma.perfil.findUnique({ where: { usuarioId: usuario.id } });
 
   const temPlano = perfil?.caloriasAlvo != null;
+  const dia = getHoje();
+
+  // Consumo real de hoje (escopado por usuarioId)
+  const [registros, aguas] = temPlano
+    ? await Promise.all([
+        prisma.registroAlimentar.findMany({ where: { usuarioId: usuario.id, dia } }),
+        prisma.registroAgua.findMany({ where: { usuarioId: usuario.id, dia } }),
+      ])
+    : [[], []];
+  const kcalHoje = registros.reduce((s, r) => s + r.kcal, 0);
+  const protHoje = registros.reduce((s, r) => s + r.proteina, 0);
+  const aguaHoje = aguas.reduce((s, a) => s + a.ml, 0);
 
   return (
     <main className="flex flex-col gap-5 px-4 pb-6 pt-6">
@@ -37,22 +50,22 @@ export default async function InicioPage() {
             <h2 className="mb-3 text-sm font-semibold text-viva-700">Metas de hoje</h2>
             <div className="grid grid-cols-3 gap-2">
               <ProgressRing
-                valor={0}
+                valor={kcalHoje}
                 meta={perfil!.caloriasAlvo!}
-                rotulo="0"
+                rotulo={kcalHoje.toLocaleString("pt-BR")}
                 legenda="kcal"
               />
               <ProgressRing
-                valor={0}
+                valor={protHoje}
                 meta={perfil!.proteinaG ?? 0}
-                rotulo="0g"
+                rotulo={`${protHoje}g`}
                 legenda="proteína"
                 cor="#4F9E78"
               />
               <ProgressRing
-                valor={0}
+                valor={aguaHoje}
                 meta={perfil!.aguaMl ?? 0}
-                rotulo="0L"
+                rotulo={`${(aguaHoje / 1000).toLocaleString("pt-BR")}L`}
                 legenda="água"
                 cor="#7CC29E"
               />
