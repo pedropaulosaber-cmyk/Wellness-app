@@ -40,3 +40,8 @@ create policy serie_registros_self on serie_registros
   for all using ((select auth.uid()) = "usuarioId") with check ((select auth.uid()) = "usuarioId");
 create policy registros_peso_self on registros_peso
   for all using ((select auth.uid()) = "usuarioId") with check ((select auth.uid()) = "usuarioId");
+
+-- Tabela de integrações (Fase 8)
+alter table atividades_externas enable row level security;
+create policy atividades_externas_self on atividades_externas
+  for all using ((select auth.uid()) = "usuarioId") with check ((select auth.uid()) = "usuarioId");

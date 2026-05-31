@@ -14,15 +14,17 @@ export default async function InicioPage() {
   const dia = getHoje();
 
   // Consumo real de hoje (escopado por usuarioId)
-  const [registros, aguas] = temPlano
+  const [registros, aguas, atividades] = temPlano
     ? await Promise.all([
         prisma.registroAlimentar.findMany({ where: { usuarioId: usuario.id, dia } }),
         prisma.registroAgua.findMany({ where: { usuarioId: usuario.id, dia } }),
+        prisma.registroAtividadeExterna.findMany({ where: { usuarioId: usuario.id, dia } }),
       ])
-    : [[], []];
+    : [[], [], []];
   const kcalHoje = registros.reduce((s, r) => s + r.kcal, 0);
   const protHoje = registros.reduce((s, r) => s + r.proteina, 0);
   const aguaHoje = aguas.reduce((s, a) => s + a.ml, 0);
+  const passosHoje = atividades.reduce((s, a) => s + (a.passos ?? 0), 0);
 
   return (
     <main className="flex flex-col gap-5 px-4 pb-6 pt-6">
@@ -75,6 +77,12 @@ export default async function InicioPage() {
               {perfil!.proteinaG}P / {perfil!.carboidratoG}C / {perfil!.gorduraG}G
             </p>
           </section>
+
+          {passosHoje > 0 && (
+            <p className="text-center text-sm text-viva-600">
+              👟 {passosHoje.toLocaleString("pt-BR")} passos hoje
+            </p>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <Link href="/nutricao" className="cartao text-center">

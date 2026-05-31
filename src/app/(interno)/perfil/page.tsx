@@ -25,6 +25,10 @@ export default async function PerfilPage() {
         )}
       </section>
 
+      <Link href="/integracoes" className="btn-secundario w-full">
+        Apps e wearables (Apple Saúde / Google Fit)
+      </Link>
+
       <Link href="/anamnese" className="btn-secundario w-full">
         Refazer anamnese / atualizar dados
       </Link>
