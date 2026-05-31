@@ -49,7 +49,7 @@ export default function PwaProvider() {
         if (outcome === "accepted") setInstalado(true);
         setPrompt(null);
       }}
-      className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-md rounded-xl bg-viva px-4 py-3 text-center text-sm font-semibold text-white shadow-lg"
+      className="fixed inset-x-3 bottom-20 z-50 mx-auto max-w-[27rem] rounded-xl bg-viva px-4 py-3 text-center text-sm font-semibold text-white shadow-lg"
     >
       📲 Instalar o Vivá no seu celular
     </button>

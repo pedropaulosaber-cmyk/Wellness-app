@@ -60,18 +60,51 @@ fórmulas. Os valores são estimativas, **não prescrição médica/nutricional*
 
 ## Roteiro de desenvolvimento
 
-- [x] **Fase 1 — Fundação**: scaffold Next.js + Tailwind + Prisma + Supabase, motor nutricional, home com anéis. ✅ `npm run build` passa.
-- [ ] **Fase 2 — PWA**: manifest, ícones, service worker, "Adicionar à tela inicial".
-- [ ] **Fase 3 — Auth + paywall** vitalício de R$ 449,90.
-- [ ] **Fase 4 — Anamnese** aprofundada + persistência.
-- [ ] **Fase 5 — Plano nutricional + cardápio (TACO)** + registro de refeições.
-- [ ] **Fase 6 — Treinos por modalidade + player + progressão de carga.**
-- [ ] **Fase 7 — Evolução, streak, conquistas.**
-- [ ] **Fase 8 — Integrações** (Apple Health / Google Fit).
-- [ ] **Fase 9 — Auditoria final mobile + PWA.**
+- [x] **Fase 1 — Fundação**: Next.js + Tailwind + Prisma + Supabase, motor nutricional, home.
+- [x] **Fase 2 — PWA**: manifest, ícones, service worker, "Adicionar à tela inicial".
+- [x] **Fase 3 — Auth + paywall** vitalício de R$ 449,90.
+- [x] **Fase 4 — Anamnese** aprofundada + persistência.
+- [x] **Fase 5 — Plano nutricional + cardápio (TACO)** + registro de refeições.
+- [x] **Fase 6 — Treinos por modalidade + player + progressão de carga.**
+- [x] **Fase 7 — Evolução, streak, conquistas.**
+- [x] **Fase 8 — Integrações** (Apple Health / Google Fit via endpoint de sync).
+- [x] **Fase 9 — Auditoria final mobile + PWA.**
 
-## Deploy (Vercel) — _instruções completas na Fase 9_
+## Configuração do Supabase
 
-Resumo: conectar o repositório na Vercel, definir as variáveis de ambiente do
-`.env.example`, e fazer deploy. As instruções de **instalação no celular** (PWA)
-serão documentadas após a Fase 2.
+1. Crie um projeto em [supabase.com](https://supabase.com).
+2. Em **Settings → API**, copie `Project URL` e `anon key` para o `.env`.
+3. Em **Settings → Database**, copie a connection string para `DATABASE_URL`/`DIRECT_URL`.
+4. Aplique o schema: `npm run prisma:push`.
+5. (Recomendado) Aplique as policies de isolamento: cole `prisma/rls.sql` no **SQL Editor**.
+   > Observação: o app acessa o banco via Prisma (conexão privilegiada), então o
+   > isolamento entre contas é garantido **na aplicação** (toda query filtra por
+   > `usuarioId`). O `rls.sql` é defesa em profundidade.
+
+## Pagamento (acesso vitalício)
+
+- Sem `PAGAMENTO_PROVIDER`, roda em **modo simulado** (testa o paywall sem cobrar).
+- Em produção, defina `PAGAMENTO_PROVIDER=asaas`, `PAGAMENTO_API_KEY` e
+  `PAGAMENTO_WEBHOOK_SECRET`, e configure o webhook do gateway para
+  `https://SEU-DOMINIO/api/pagamento/webhook`. Ao confirmar, o usuário recebe
+  `acessoVitalicio = true`.
+
+## Deploy (Vercel)
+
+1. Importe o repositório na [Vercel](https://vercel.com).
+2. Em **Settings → Environment Variables**, adicione todas as variáveis do `.env.example`.
+3. Build Command: `npm run build` (já roda `prisma generate`). Deploy.
+4. Configure o **Redirect URL** do Supabase Auth para `https://SEU-DOMINIO/auth/callback`.
+
+## Como instalar no celular (PWA)
+
+- **iPhone (Safari)**: toque em **Compartilhar** → **Adicionar à Tela de Início**.
+- **Android (Chrome)**: o app oferece o botão **"Instalar o Vivá"**; ou menu **⋮ → Instalar app**.
+- Após instalar, o Vivá abre em tela cheia (standalone) e funciona offline nas telas já visitadas.
+
+## Conectar Apple Saúde / Google Fit
+
+Em **Perfil → Apps e wearables**, gere o token e use o endpoint exibido num
+**Atalho do iOS** (lê passos/FC e faz POST) ou num job do **Health Connect**
+(Android). Sincronização nativa em tempo real exige empacotar como app
+(Capacitor) — a arquitetura (`/api/integracoes/importar`) já está pronta.
