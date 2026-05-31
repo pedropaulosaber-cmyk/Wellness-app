@@ -1,11 +1,20 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import PwaProvider from "@/components/PwaProvider";
 
 export const metadata: Metadata = {
   title: "Vivá — treino e nutrição num só lugar",
   description:
     "O Vivá unifica todos os seus treinos e a sua alimentação. Acesso vitalício, sem mensalidade.",
   applicationName: "Vivá",
+  manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/icons/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -28,7 +37,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className="mx-auto min-h-dvh max-w-md">{children}</body>
+      <body className="mx-auto min-h-dvh max-w-md">
+        {children}
+        <PwaProvider />
+      </body>
     </html>
   );
 }
