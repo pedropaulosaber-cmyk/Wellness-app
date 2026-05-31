@@ -1,19 +1,32 @@
-import Link from "next/link";
+import { requireUsuario } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import AnamneseForm from "@/components/AnamneseForm";
+import type { DadosAnamnese } from "@/app/anamnese/actions";
 
-// Placeholder da Fase 1. O fluxo completo de anamnese (com rotina, sono,
-// lesões e experiência de treino) + persistência no banco vem na Fase 4.
-export default function AnamnesePage() {
-  return (
-    <main className="flex min-h-dvh flex-col items-start gap-4 px-4 pt-6">
-      <h1 className="text-2xl font-bold text-viva-900">Anamnese</h1>
-      <p className="text-sm text-viva-600">
-        Em breve: vamos te fazer algumas perguntas (objetivo, rotina, sono,
-        lesões e experiência) para montar seu plano de treino e nutrição
-        personalizado.
-      </p>
-      <Link href="/" className="btn-secundario">
-        Voltar
-      </Link>
-    </main>
-  );
+export const dynamic = "force-dynamic";
+
+export default async function AnamnesePage() {
+  const usuario = await requireUsuario();
+  // Pré-preenche se o usuário já respondeu antes (refazer/atualizar).
+  const perfil = await prisma.perfil.findUnique({ where: { usuarioId: usuario.id } });
+
+  const inicial: Partial<DadosAnamnese> | undefined = perfil
+    ? {
+        sexo: perfil.sexo,
+        idade: perfil.idade,
+        pesoKg: perfil.pesoKg,
+        alturaCm: perfil.alturaCm,
+        nivelAtividade: perfil.nivelAtividade,
+        objetivo: perfil.objetivo,
+        rotinaTrabalho: perfil.rotinaTrabalho ?? undefined,
+        horasSono: perfil.horasSono ?? undefined,
+        qualidadeSono: perfil.qualidadeSono ?? undefined,
+        lesoes: perfil.lesoes ?? undefined,
+        experienciaTreino: perfil.experienciaTreino ?? undefined,
+        modalidades: perfil.modalidades,
+        restricoes: perfil.restricoes,
+      }
+    : undefined;
+
+  return <AnamneseForm inicial={inicial} jaPago={usuario.acessoVitalicio} />;
 }
