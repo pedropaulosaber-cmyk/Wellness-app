@@ -1,0 +1,90 @@
+// Schema do Vivá — evolui por fase. Cada nova tabela com dado de usuário
+// deve nascer com RLS no Supabase (ver skill supabase-rls-guard).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ── Enums (espelham src/lib/nutrition.ts) ────────────────────
+
+enum Sexo {
+  masculino
+  feminino
+}
+
+enum NivelAtividade {
+  sedentario
+  leve
+  moderado
+  intenso
+  muito_intenso
+}
+
+enum Objetivo {
+  emagrecer
+  manter
+  ganhar_massa
+}
+
+// ── Usuário e modelo de negócio (acesso VITALÍCIO) ───────────
+
+/// Espelha o usuário do Supabase Auth (id = auth.users.id).
+model Usuario {
+  id    String @id @db.Uuid // = auth.uid()
+  email String @unique
+  nome  String?
+
+  // Modelo de negócio: pagamento ÚNICO de R$ 449,90 = acesso vitalício.
+  // NÃO é assinatura.
+  acessoVitalicio Boolean   @default(false)
+  compraEm        DateTime?
+
+  perfil  Perfil?
+  criadoEm DateTime @default(now())
+
+  @@map("usuarios")
+}
+
+// ── Anamnese / Perfil ────────────────────────────────────────
+
+model Perfil {
+  id        String  @id @default(uuid()) @db.Uuid
+  usuarioId String  @unique @db.Uuid
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  // Dados corporais
+  sexo           Sexo
+  idade          Int
+  pesoKg         Float
+  alturaCm       Float
+  nivelAtividade NivelAtividade
+  objetivo       Objetivo
+
+  // Anamnese aprofundada (fundador é fisioterapeuta — lesões importam)
+  rotinaTrabalho   String? // ex.: "escritório 8h", "operacional em pé"
+  horasSono        Float? // média por noite
+  qualidadeSono    Int? // 1–5
+  lesoes           String? // texto livre / limitações
+  experienciaTreino String? // iniciante | intermediario | avancado
+
+  // Modalidades escolhidas (ex.: ["musculacao","corrida"])
+  modalidades String[]
+  restricoes  String[] // alimentares
+
+  // Snapshot do plano calculado (recalculado quando muda peso/objetivo/rotina)
+  caloriasAlvo  Int?
+  proteinaG     Int?
+  carboidratoG  Int?
+  gorduraG      Int?
+  aguaMl        Int?
+
+  atualizadoEm DateTime @default(now()) @updatedAt
+
+  @@map("perfis")
+}
