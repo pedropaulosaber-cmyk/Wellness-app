@@ -28,3 +28,15 @@ create policy registros_alimentares_self on registros_alimentares
 -- registros de água
 create policy registros_agua_self on registros_agua
   for all using ((select auth.uid()) = "usuarioId") with check ((select auth.uid()) = "usuarioId");
+
+-- Tabelas adicionadas nas Fases 6–7
+alter table treino_sessoes enable row level security;
+alter table serie_registros enable row level security;
+alter table registros_peso  enable row level security;
+
+create policy treino_sessoes_self on treino_sessoes
+  for all using ((select auth.uid()) = "usuarioId") with check ((select auth.uid()) = "usuarioId");
+create policy serie_registros_self on serie_registros
+  for all using ((select auth.uid()) = "usuarioId") with check ((select auth.uid()) = "usuarioId");
+create policy registros_peso_self on registros_peso
+  for all using ((select auth.uid()) = "usuarioId") with check ((select auth.uid()) = "usuarioId");
