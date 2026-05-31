@@ -48,6 +48,7 @@ model Usuario {
   perfil    Perfil?
   registros RegistroAlimentar[]
   aguas     RegistroAgua[]
+  sessoes   TreinoSessao[]
   criadoEm  DateTime            @default(now())
 
   @@map("usuarios")
@@ -126,4 +127,42 @@ model RegistroAgua {
 
   @@index([usuarioId, dia])
   @@map("registros_agua")
+}
+
+// ── Treinos ──────────────────────────────────────────────────
+
+model TreinoSessao {
+  id        String  @id @default(uuid()) @db.Uuid
+  usuarioId String  @db.Uuid
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  dia         String // YYYY-MM-DD
+  modalidade  String
+  nome        String
+  tipo        String // forca | cardio | mobilidade
+  duracaoMin  Int?
+  distanciaKm Float?
+  paceSeg     Int? // segundos por km (cardio)
+  series      SerieRegistro[]
+  criadoEm    DateTime        @default(now())
+
+  @@index([usuarioId, dia])
+  @@map("treino_sessoes")
+}
+
+model SerieRegistro {
+  id        String       @id @default(uuid()) @db.Uuid
+  sessaoId  String       @db.Uuid
+  sessao    TreinoSessao @relation(fields: [sessaoId], references: [id], onDelete: Cascade)
+  usuarioId String       @db.Uuid // desnormalizado p/ consultar progressão por usuário
+
+  exercicioId   String
+  exercicioNome String
+  serie         Int
+  reps          Int
+  cargaKg       Float?
+  criadoEm      DateTime @default(now())
+
+  @@index([usuarioId, exercicioId])
+  @@map("serie_registros")
 }
