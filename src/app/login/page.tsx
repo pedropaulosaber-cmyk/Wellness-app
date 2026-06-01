@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { criarSupabaseBrowser } from "@/lib/supabase/client";
+import Logo from "@/components/Logo";
 
 function LoginForm() {
   const router = useRouter();
@@ -33,39 +34,50 @@ function LoginForm() {
   }
 
   return (
-    <main className="flex min-h-dvh flex-col justify-center gap-6 px-5">
-      <header className="text-center">
-        <h1 className="text-2xl font-bold text-viva-900">Entrar no Vivá</h1>
-        <p className="mt-1 text-sm text-viva-600">Bem-vindo de volta.</p>
-      </header>
+    <main className="fundo-suave flex min-h-dvh flex-col justify-center px-5">
+      <div className="mb-8 flex flex-col items-center gap-3 text-center">
+        <Logo tamanho={52} comNome={false} />
+        <div>
+          <h1 className="text-2xl font-extrabold text-viva-900">Bem-vindo de volta</h1>
+          <p className="mt-1 text-sm text-viva-600">Entre para continuar no Vivá.</p>
+        </div>
+      </div>
 
-      <form onSubmit={entrar} className="flex flex-col gap-3">
-        <input
-          type="email"
-          inputMode="email"
-          autoComplete="email"
-          required
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="toque rounded-xl border border-viva-200 px-4 py-3 text-base"
-        />
-        <input
-          type="password"
-          autoComplete="current-password"
-          required
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          className="toque rounded-xl border border-viva-200 px-4 py-3 text-base"
-        />
-        {erro && <p className="text-sm text-red-600">{erro}</p>}
+      <form onSubmit={entrar} className="cartao flex flex-col gap-4 p-5">
+        <div>
+          <label className="rotulo">E-mail</label>
+          <input
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            required
+            placeholder="voce@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="campo"
+          />
+        </div>
+        <div>
+          <label className="rotulo">Senha</label>
+          <input
+            type="password"
+            autoComplete="current-password"
+            required
+            placeholder="••••••••"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            className="campo"
+          />
+        </div>
+        {erro && (
+          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{erro}</p>
+        )}
         <button type="submit" disabled={carregando} className="btn-primario w-full">
           {carregando ? "Entrando…" : "Entrar"}
         </button>
       </form>
 
-      <p className="text-center text-sm text-viva-600">
+      <p className="mt-6 text-center text-sm text-viva-600">
         Não tem conta?{" "}
         <Link href="/cadastro" className="font-semibold text-viva">
           Criar conta

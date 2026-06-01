@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { criarSupabaseBrowser } from "@/lib/supabase/client";
+import Logo from "@/components/Logo";
 
 export default function CadastroPage() {
   const router = useRouter();
@@ -34,7 +35,6 @@ export default function CadastroPage() {
         },
       });
       if (error) throw error;
-      // Se a confirmação de e-mail estiver desativada, já vem sessão → vai pra anamnese.
       if (data.session) {
         router.push("/anamnese");
         router.refresh();
@@ -49,51 +49,67 @@ export default function CadastroPage() {
   }
 
   return (
-    <main className="flex min-h-dvh flex-col justify-center gap-6 px-5">
-      <header className="text-center">
-        <h1 className="text-2xl font-bold text-viva-900">Criar conta</h1>
-        <p className="mt-1 text-sm text-viva-600">
-          Comece sua jornada. Acesso vitalício, sem mensalidade.
-        </p>
-      </header>
+    <main className="fundo-suave flex min-h-dvh flex-col justify-center px-5 py-10">
+      <div className="mb-7 flex flex-col items-center gap-3 text-center">
+        <Logo tamanho={52} comNome={false} />
+        <div>
+          <h1 className="text-2xl font-extrabold text-viva-900">Crie sua conta</h1>
+          <p className="mt-1 text-sm text-viva-600">
+            Comece sua jornada. Acesso vitalício, sem mensalidade.
+          </p>
+        </div>
+      </div>
 
-      <form onSubmit={cadastrar} className="flex flex-col gap-3">
-        <input
-          type="text"
-          autoComplete="name"
-          required
-          placeholder="Seu nome"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          className="toque rounded-xl border border-viva-200 px-4 py-3 text-base"
-        />
-        <input
-          type="email"
-          inputMode="email"
-          autoComplete="email"
-          required
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="toque rounded-xl border border-viva-200 px-4 py-3 text-base"
-        />
-        <input
-          type="password"
-          autoComplete="new-password"
-          required
-          placeholder="Senha (mín. 6 caracteres)"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          className="toque rounded-xl border border-viva-200 px-4 py-3 text-base"
-        />
-        {erro && <p className="text-sm text-red-600">{erro}</p>}
-        {aviso && <p className="text-sm text-viva">{aviso}</p>}
+      <form onSubmit={cadastrar} className="cartao flex flex-col gap-4 p-5">
+        <div>
+          <label className="rotulo">Seu nome</label>
+          <input
+            type="text"
+            autoComplete="name"
+            required
+            placeholder="Como podemos te chamar?"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            className="campo"
+          />
+        </div>
+        <div>
+          <label className="rotulo">E-mail</label>
+          <input
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            required
+            placeholder="voce@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="campo"
+          />
+        </div>
+        <div>
+          <label className="rotulo">Senha</label>
+          <input
+            type="password"
+            autoComplete="new-password"
+            required
+            placeholder="Mínimo 6 caracteres"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            className="campo"
+          />
+        </div>
+        {erro && (
+          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{erro}</p>
+        )}
+        {aviso && (
+          <p className="rounded-lg bg-viva-50 px-3 py-2 text-sm text-viva-700">{aviso}</p>
+        )}
         <button type="submit" disabled={carregando} className="btn-primario w-full">
           {carregando ? "Criando…" : "Criar conta"}
         </button>
       </form>
 
-      <p className="text-center text-sm text-viva-600">
+      <p className="mt-6 text-center text-sm text-viva-600">
         Já tem conta?{" "}
         <Link href="/login" className="font-semibold text-viva">
           Entrar

@@ -33,4 +33,24 @@ body {
   .cartao {
     @apply rounded-2xl border border-viva-100 bg-white p-4 shadow-sm;
   }
+  .campo {
+    @apply toque w-full rounded-xl border border-viva-200 bg-white px-4 py-3 text-base text-viva-900 outline-none transition placeholder:text-viva-300 focus:border-viva focus:ring-2 focus:ring-viva-100;
+  }
+  .rotulo {
+    @apply mb-1 block text-sm font-medium text-viva-700;
+  }
+}
+
+@layer utilities {
+  .hero-gradient {
+    background: linear-gradient(150deg, #1f6b4a 0%, #134534 60%, #0d3226 100%);
+  }
+  .texto-degrade {
+    @apply bg-gradient-to-r from-viva-500 to-viva-mint bg-clip-text text-transparent;
+  }
+  .fundo-suave {
+    background:
+      radial-gradient(60% 50% at 50% 0%, rgba(124, 194, 158, 0.18) 0%, rgba(124, 194, 158, 0) 70%),
+      #f7fbf8;
+  }
 }
