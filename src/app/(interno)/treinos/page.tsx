@@ -1,16 +1,38 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { requireAcesso } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { gerarPlanoSemanal, type SessaoPlanejada } from "@/lib/treino";
 import { getHoje } from "@/lib/datas";
-import { gerarPlanoSemanal } from "@/lib/treino";
+import { getPerfil, getSessoes } from "@/lib/local";
 
-export const dynamic = "force-dynamic";
+export default function TreinosPage() {
+  const [plano, setPlano] = useState<SessaoPlanejada[] | null>(null);
+  const [lesoes, setLesoes] = useState<string | undefined>();
+  const [feitos, setFeitos] = useState<Set<string>>(new Set());
+  const [pronto, setPronto] = useState(false);
 
-export default async function TreinosPage() {
-  const usuario = await requireAcesso();
-  const perfil = await prisma.perfil.findUnique({ where: { usuarioId: usuario.id } });
+  useEffect(() => {
+    const p = getPerfil();
+    if (p) {
+      setPlano(
+        gerarPlanoSemanal({
+          modalidades: p.modalidades,
+          objetivo: p.objetivo,
+          experienciaTreino: p.experienciaTreino,
+          lesoes: p.lesoes,
+        })
+      );
+      setLesoes(p.lesoes ?? undefined);
+      const hoje = getHoje();
+      setFeitos(new Set(getSessoes().filter((s) => s.dia === hoje).map((s) => s.nome)));
+    }
+    setPronto(true);
+  }, []);
 
-  if (!perfil) {
+  if (!pronto) return null;
+
+  if (!plano) {
     return (
       <main className="flex flex-col gap-4 px-4 pb-6 pt-6">
         <h1 className="text-2xl font-bold text-viva-900">Treinos</h1>
@@ -27,25 +49,12 @@ export default async function TreinosPage() {
     );
   }
 
-  const plano = gerarPlanoSemanal({
-    modalidades: perfil.modalidades,
-    objetivo: perfil.objetivo,
-    experienciaTreino: perfil.experienciaTreino,
-    lesoes: perfil.lesoes,
-  });
-
-  const feitosHoje = await prisma.treinoSessao.findMany({
-    where: { usuarioId: usuario.id, dia: getHoje() },
-    select: { nome: true },
-  });
-  const nomesFeitos = new Set(feitosHoje.map((s) => s.nome));
-
   return (
     <main className="flex flex-col gap-4 px-4 pb-6 pt-6">
       <h1 className="text-2xl font-bold text-viva-900">Seu plano de treino</h1>
-      {perfil.lesoes && perfil.lesoes.toLowerCase() !== "nenhuma" && (
+      {lesoes && lesoes.toLowerCase() !== "nenhuma" && (
         <p className="rounded-xl bg-viva-50 px-3 py-2 text-xs text-viva-700">
-          ⚠️ Exercícios adaptados às suas limitações: {perfil.lesoes}
+          ⚠️ Exercícios adaptados às suas limitações: {lesoes}
         </p>
       )}
 
@@ -68,7 +77,7 @@ export default async function TreinosPage() {
               </p>
             </div>
             <span className="text-sm font-semibold text-viva">
-              {nomesFeitos.has(s.titulo) ? "✓ hoje" : "Iniciar →"}
+              {feitos.has(s.titulo) ? "✓ hoje" : "Iniciar →"}
             </span>
           </Link>
         ))}

@@ -8,7 +8,7 @@ const ITENS = [
   { href: "/treinos", rotulo: "Treinos", icone: "🏋️" },
   { href: "/nutricao", rotulo: "Nutrição", icone: "🥗" },
   { href: "/evolucao", rotulo: "Evolução", icone: "📈" },
-  { href: "/perfil", rotulo: "Perfil", icone: "👤" },
+  { href: "/blog", rotulo: "Blog", icone: "📰" },
 ];
 
 // Barra de navegação inferior (padrão de app mobile).

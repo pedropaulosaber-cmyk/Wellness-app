@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { SessaoPlanejada } from "@/lib/treino";
 import { sugerirCarga } from "@/lib/treino";
-import { salvarSessao, type SeriePayload } from "@/app/(interno)/treinos/actions";
+import { addSessao, type SerieLog } from "@/lib/local";
 
 interface SerieEstado {
   reps: number;
@@ -72,9 +72,9 @@ export default function PlayerForca({
     setDescanso(75); // inicia descanso
   }
 
-  async function finalizar() {
+  function finalizar() {
     setSalvando(true);
-    const payload: SeriePayload[] = [];
+    const payload: SerieLog[] = [];
     sessao.itens.forEach((it, i) => {
       series[i].forEach((s, j) => {
         if (s.feito)
@@ -87,14 +87,13 @@ export default function PlayerForca({
           });
       });
     });
-    await salvarSessao({
+    addSessao({
       modalidade: sessao.modalidade,
       nome: sessao.titulo,
       tipo: "forca",
       series: payload,
     });
     router.push("/treinos");
-    router.refresh();
   }
 
   return (

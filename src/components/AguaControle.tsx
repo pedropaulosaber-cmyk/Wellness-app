@@ -1,11 +1,20 @@
 "use client";
 
-import { useTransition } from "react";
-import { registrarAgua } from "@/app/(interno)/nutricao/actions";
+import { addAgua } from "@/lib/local";
 
-export default function AguaControle({ consumido, meta }: { consumido: number; meta: number }) {
-  const [pendente, startTransition] = useTransition();
-  const add = (ml: number) => startTransition(() => registrarAgua(ml));
+export default function AguaControle({
+  consumido,
+  meta,
+  onAdd,
+}: {
+  consumido: number;
+  meta: number;
+  onAdd?: () => void;
+}) {
+  const add = (ml: number) => {
+    addAgua(ml);
+    onAdd?.();
+  };
 
   return (
     <section className="cartao">
@@ -23,12 +32,7 @@ export default function AguaControle({ consumido, meta }: { consumido: number; m
       </div>
       <div className="mt-3 flex gap-2">
         {[200, 300, 500].map((ml) => (
-          <button
-            key={ml}
-            disabled={pendente}
-            onClick={() => add(ml)}
-            className="btn-secundario flex-1"
-          >
+          <button key={ml} onClick={() => add(ml)} className="btn-secundario flex-1">
             +{ml}ml
           </button>
         ))}

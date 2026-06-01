@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { SessaoPlanejada } from "@/lib/treino";
-import { salvarSessao } from "@/app/(interno)/treinos/actions";
+import { addSessao } from "@/lib/local";
 
 // Registro de sessão de cardio/mobilidade (corrida, bike, natação, pilates…).
 export default function CardioForm({ sessao }: { sessao: SessaoPlanejada }) {
@@ -22,18 +22,18 @@ export default function CardioForm({ sessao }: { sessao: SessaoPlanejada }) {
     ? `${Math.floor(paceSeg / 60)}:${String(paceSeg % 60).padStart(2, "0")} /km`
     : "—";
 
-  async function salvar() {
+  function salvar() {
     setSalvando(true);
-    await salvarSessao({
+    addSessao({
       modalidade: sessao.modalidade,
       nome: sessao.titulo,
       tipo: sessao.tipo,
       duracaoMin: duracao === "" ? null : Number(duracao),
       distanciaKm: distancia === "" ? null : Number(distancia),
       paceSeg,
+      series: [],
     });
     router.push("/treinos");
-    router.refresh();
   }
 
   return (

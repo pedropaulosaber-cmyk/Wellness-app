@@ -11,12 +11,17 @@ const RECURSOS = [
   {
     emoji: "🥗",
     titulo: "Nutrição de verdade",
-    texto: "Plano calórico personalizado e cardápio com alimentos brasileiros que batem suas metas.",
+    texto: "Plano calórico personalizado, cardápio brasileiro e dietas baseadas no Guia Alimentar.",
   },
   {
     emoji: "📈",
     titulo: "Evolução visível",
     texto: "Gráficos de peso e carga, sequência (streak) e conquistas para manter o ritmo.",
+  },
+  {
+    emoji: "📰",
+    titulo: "Blog Vivá",
+    texto: "Conteúdo de treino, nutrição e bem-estar para te guiar do início ao avançado.",
   },
 ];
 
@@ -26,13 +31,13 @@ export default function LandingPage() {
       {/* Top bar */}
       <div className="flex items-center justify-between px-5 pt-5">
         <Logo tamanho={36} />
-        <Link href="/login" className="text-sm font-semibold text-viva-700">
+        <Link href="/inicio" className="text-sm font-semibold text-viva-700">
           Entrar
         </Link>
       </div>
 
       {/* Hero */}
-      <header className="px-5 pt-10 text-center">
+      <header className="px-5 pt-8 text-center">
         <span className="inline-block rounded-full bg-viva-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-viva-700">
           Treino + Nutrição num só app
         </span>
@@ -41,22 +46,36 @@ export default function LandingPage() {
           <span className="texto-degrade">toda num lugar só.</span>
         </h1>
         <p className="mx-auto mt-4 max-w-sm text-[15px] leading-relaxed text-viva-600">
-          Pare de pular entre cinco apps. O Vivá unifica todos os seus treinos e
-          a sua alimentação — feito para o seu celular.
-        </p>
-
-        <div className="mt-7 flex flex-col gap-3">
-          <Link href="/cadastro" className="btn-primario w-full text-base">
-            Começar agora
-          </Link>
-          <Link href="/login" className="btn-secundario w-full text-base">
-            Já tenho conta
-          </Link>
-        </div>
-        <p className="mt-3 text-xs text-viva-400">
-          Pagamento único · sem mensalidade · acesso vitalício
+          Pare de pular entre cinco apps. O Vivá unifica todos os seus treinos e a
+          sua alimentação — feito para o seu celular.
         </p>
       </header>
+
+      {/* Hero visual (ilustração) */}
+      <div className="mt-7 px-5">
+        <div className="hero-gradient relative flex h-52 items-center justify-center overflow-hidden rounded-3xl shadow-lg">
+          <div className="absolute -left-6 -top-6 h-28 w-28 rounded-full bg-white/10" />
+          <div className="absolute -bottom-8 -right-4 h-32 w-32 rounded-full bg-white/5" />
+          <Logo tamanho={64} comNome={false} claro />
+          <span className="absolute left-5 top-6 text-3xl">🏋️</span>
+          <span className="absolute right-6 top-10 text-3xl">🥗</span>
+          <span className="absolute bottom-6 left-10 text-3xl">🧘</span>
+          <span className="absolute bottom-8 right-10 text-3xl">📈</span>
+        </div>
+      </div>
+
+      {/* CTAs — entrada direta */}
+      <div className="mt-7 flex flex-col gap-3 px-5">
+        <Link href="/anamnese" className="btn-primario w-full text-base">
+          Começar agora
+        </Link>
+        <Link href="/inicio" className="btn-secundario w-full text-base">
+          Explorar o app
+        </Link>
+        <p className="text-center text-xs text-viva-400">
+          Sem cadastro para começar · seus dados ficam no seu aparelho
+        </p>
+      </div>
 
       {/* Recursos */}
       <section className="mt-12 space-y-3 px-5">
@@ -77,19 +96,17 @@ export default function LandingPage() {
       <section className="mt-12 px-5">
         <div className="hero-gradient relative overflow-hidden rounded-3xl p-7 text-center text-white shadow-lg">
           <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10" />
-          <div className="absolute -bottom-10 -left-6 h-28 w-28 rounded-full bg-white/5" />
           <p className="relative text-sm font-medium uppercase tracking-wide text-viva-100">
-            Acesso vitalício
+            Plano vitalício
           </p>
           <p className="relative mt-2 text-5xl font-extrabold">{PRECO_LABEL}</p>
-          <p className="relative mt-1 text-sm text-viva-100">pagamento único</p>
-
+          <p className="relative mt-1 text-sm text-viva-100">pagamento único, sem mensalidade</p>
           <ul className="relative mt-5 space-y-2 text-left text-sm">
             {[
               "Todos os treinos e modalidades",
-              "Plano nutricional ilimitado",
+              "Plano nutricional e dietas prontas",
               "Evolução, streak e conquistas",
-              "Todas as atualizações futuras",
+              "Blog e atualizações futuras",
             ].map((b) => (
               <li key={b} className="flex items-center gap-2">
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-xs">
@@ -99,16 +116,12 @@ export default function LandingPage() {
               </li>
             ))}
           </ul>
-
           <Link
-            href="/cadastro"
+            href="/anamnese"
             className="relative mt-6 inline-flex w-full items-center justify-center rounded-xl bg-white px-5 py-3 font-bold text-viva-700 transition active:scale-[0.98]"
           >
-            Quero meu acesso
+            Começar agora
           </Link>
-          <p className="relative mt-3 text-xs text-viva-100/80">
-            Todos os concorrentes são assinatura. O Vivá é seu para sempre.
-          </p>
         </div>
       </section>
 
