@@ -12,6 +12,9 @@ export const ROTAS_INTERNAS = [
   "/treinos",
   "/evolucao",
   "/perfil",
+  "/integracoes",
 ];
 // Rotas que exigem apenas login (ex.: anamnese antes do paywall).
+// OBS: o middleware (edge) mantém uma cópia inline desta lista, pois não pode
+// importar este módulo. Ao alterar aqui, atualize também o middleware.ts.
 export const ROTAS_AUTENTICADAS = [...ROTAS_INTERNAS, "/anamnese"];
