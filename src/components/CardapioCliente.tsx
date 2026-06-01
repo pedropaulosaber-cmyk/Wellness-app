@@ -1,19 +1,20 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState } from "react";
 import { gerarCardapio } from "@/lib/cardapio";
-import { registrarRefeicao } from "@/app/(interno)/nutricao/actions";
+import { addRefeicoes } from "@/lib/local";
 
 export default function CardapioCliente({
   caloriasAlvo,
   restricoes,
+  onRegistrar,
 }: {
   caloriasAlvo: number;
   restricoes: string[];
+  onRegistrar?: () => void;
 }) {
   const [variacoes, setVariacoes] = useState<Record<string, number>>({});
   const [registrada, setRegistrada] = useState<Record<string, boolean>>({});
-  const [pendente, startTransition] = useTransition();
 
   const cardapio = useMemo(
     () => gerarCardapio(caloriasAlvo, restricoes, variacoes),
@@ -54,13 +55,22 @@ export default function CardapioCliente({
           </ul>
 
           <button
-            disabled={pendente || registrada[r.chave]}
-            onClick={() =>
-              startTransition(async () => {
-                await registrarRefeicao(r.chave, r.itens);
-                setRegistrada((s) => ({ ...s, [r.chave]: true }));
-              })
-            }
+            disabled={registrada[r.chave]}
+            onClick={() => {
+              addRefeicoes(
+                r.chave,
+                r.itens.map((it) => ({
+                  nome: it.nome,
+                  gramas: it.gramas,
+                  kcal: it.kcal,
+                  proteina: it.proteina,
+                  carbo: it.carbo,
+                  gordura: it.gordura,
+                }))
+              );
+              setRegistrada((s) => ({ ...s, [r.chave]: true }));
+              onRegistrar?.();
+            }}
             className="btn-secundario mt-3 w-full"
           >
             {registrada[r.chave] ? "✓ Registrado" : "Registrar refeição"}

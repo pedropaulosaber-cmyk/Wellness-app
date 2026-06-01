@@ -2,7 +2,30 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { salvarAnamnese, type DadosAnamnese } from "@/app/anamnese/actions";
+import {
+  gerarPlanoNutricional,
+  planoParaExibicao,
+  type NivelAtividade,
+  type Objetivo,
+  type Sexo,
+} from "@/lib/nutrition";
+import { setPerfil } from "@/lib/local";
+
+export interface DadosAnamnese {
+  sexo: Sexo;
+  idade: number;
+  pesoKg: number;
+  alturaCm: number;
+  nivelAtividade: NivelAtividade;
+  objetivo: Objetivo;
+  rotinaTrabalho?: string;
+  horasSono?: number;
+  qualidadeSono?: number;
+  lesoes?: string;
+  experienciaTreino?: string;
+  modalidades: string[];
+  restricoes: string[];
+}
 
 const OBJETIVOS: { v: DadosAnamnese["objetivo"]; t: string; d: string }[] = [
   { v: "emagrecer", t: "Emagrecer", d: "Perder gordura mantendo massa" },
@@ -69,13 +92,7 @@ function Chip({
   );
 }
 
-export default function AnamneseForm({
-  inicial,
-  jaPago,
-}: {
-  inicial?: Form;
-  jaPago: boolean;
-}) {
+export default function AnamneseForm({ inicial }: { inicial?: Form }) {
   const [passo, setPasso] = useState(0);
   const [f, setF] = useState<Form>({
     modalidades: [],
@@ -84,10 +101,7 @@ export default function AnamneseForm({
   });
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
-  const [plano, setPlano] = useState<Extract<
-    Awaited<ReturnType<typeof salvarAnamnese>>,
-    { ok: true }
-  >["plano"] | null>(null);
+  const [plano, setPlano] = useState<ReturnType<typeof planoParaExibicao> | null>(null);
 
   const set = (patch: Form) => setF((prev) => ({ ...prev, ...patch }));
   const toggle = (campo: "modalidades" | "restricoes", v: string) =>
@@ -112,10 +126,45 @@ export default function AnamneseForm({
       return;
     }
     setSalvando(true);
-    const r = await salvarAnamnese(f as DadosAnamnese);
-    setSalvando(false);
-    if (r.ok) setPlano(r.plano);
-    else setErro(r.error);
+    try {
+      const d = f as DadosAnamnese;
+      const exib = planoParaExibicao(
+        gerarPlanoNutricional({
+          sexo: d.sexo,
+          idade: d.idade,
+          pesoKg: d.pesoKg,
+          alturaCm: d.alturaCm,
+          nivelAtividade: d.nivelAtividade,
+          objetivo: d.objetivo,
+        })
+      );
+      // Persiste localmente (sem login/banco)
+      setPerfil({
+        sexo: d.sexo,
+        idade: d.idade,
+        pesoKg: d.pesoKg,
+        alturaCm: d.alturaCm,
+        nivelAtividade: d.nivelAtividade,
+        objetivo: d.objetivo,
+        rotinaTrabalho: d.rotinaTrabalho,
+        horasSono: d.horasSono,
+        qualidadeSono: d.qualidadeSono,
+        lesoes: d.lesoes,
+        experienciaTreino: d.experienciaTreino,
+        modalidades: d.modalidades ?? [],
+        restricoes: d.restricoes ?? [],
+        caloriasAlvo: exib.caloriasAlvo,
+        proteinaG: exib.macros.proteinaG,
+        carboidratoG: exib.macros.carboidratoG,
+        gorduraG: exib.macros.gorduraG,
+        aguaMl: exib.aguaMl,
+      });
+      setPlano(exib);
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Dados inválidos");
+    } finally {
+      setSalvando(false);
+    }
   }
 
   // ── Tela de resultado ──────────────────────────────────────
@@ -159,15 +208,9 @@ export default function AnamneseForm({
           Estimativas (Mifflin-St Jeor). Não substituem orientação médica/nutricional.
         </p>
 
-        {jaPago ? (
-          <Link href="/inicio" className="btn-primario w-full">
-            Ir para meu painel
-          </Link>
-        ) : (
-          <Link href="/comprar" className="btn-primario w-full">
-            Desbloquear meu plano completo
-          </Link>
-        )}
+        <Link href="/inicio" className="btn-primario w-full">
+          Ir para meu painel
+        </Link>
       </main>
     );
   }
