@@ -1,11 +1,15 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { CartProvider } from "@/components/site/CartProvider";
+import Navbar from "@/components/site/Navbar";
+import Footer from "@/components/site/Footer";
+import CartDrawer from "@/components/site/CartDrawer";
+import TrackPageView from "@/components/site/TrackPageView";
 
 export const metadata: Metadata = {
   title: "Gaspar Lopes Alfaiataria — Elegância que define quem você é",
   description:
-    "Alfaiataria clássica brasileira. Corte preciso, tecidos nobres e entrega para todo o Brasil.",
+    "Alfaiataria clássica brasileira. Camisas e camisetas sob medida, peças autorais e entrega para todo o Brasil.",
   applicationName: "Gaspar Lopes Alfaiataria",
 };
 
@@ -27,7 +31,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          <TrackPageView />
+          <Navbar />
+          {children}
+          <Footer />
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

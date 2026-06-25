@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { COLUNAS_RODAPE, PAGAMENTOS } from "@/lib/site-data";
 
 export default function Footer() {
@@ -29,14 +30,14 @@ export default function Footer() {
               {col.title}
             </div>
             {col.links.map((l) => (
-              <a
-                key={l}
-                href="#"
+              <Link
+                key={l.label}
+                href={l.href}
                 className="gl-link"
                 style={{ display: "block", fontWeight: 300, fontSize: 13, color: "rgba(245,240,235,.6)", textDecoration: "none", marginBottom: 13 }}
               >
-                {l}
-              </a>
+                {l.label}
+              </Link>
             ))}
           </div>
         ))}

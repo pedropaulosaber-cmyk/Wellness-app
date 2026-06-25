@@ -1,17 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCart } from "./CartProvider";
 
 const LINKS = [
-  { href: "#historia", label: "Nossa História" },
-  { href: "#colecoes", label: "Coleções" },
-  { href: "#sobmedida", label: "Sob Medida" },
-  { href: "#contato", label: "Contato" },
+  { href: "/camisas", label: "Camisas & Camisetas" },
+  { href: "/autorais", label: "Peças Autorais" },
+  { href: "/#historia", label: "História" },
+  { href: "/#contato", label: "Contato" },
 ];
 
 export default function Navbar() {
   const { count, toggle } = useCart();
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
 
@@ -22,8 +25,12 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navBg = scrolled ? "rgba(13,27,42,0.92)" : "rgba(13,27,42,0.2)";
-  const navBorder = scrolled ? "rgba(245,240,235,0.1)" : "rgba(245,240,235,0)";
+  useEffect(() => setMenu(false), [pathname]);
+
+  // Em páginas internas a navbar é sempre sólida; na home, só após rolar.
+  const opaca = scrolled || pathname !== "/";
+  const navBg = opaca ? "rgba(13,27,42,0.95)" : "rgba(13,27,42,0.2)";
+  const navBorder = opaca ? "rgba(245,240,235,0.1)" : "rgba(245,240,235,0)";
 
   return (
     <nav
@@ -44,74 +51,37 @@ export default function Navbar() {
         borderBottom: `1px solid ${navBorder}`,
       }}
     >
-      {/* Links desktop */}
       <div
         className="gl-nav-desktop"
-        style={{
-          gap: 32,
-          flex: 1,
-          fontWeight: 300,
-          fontSize: 13,
-          letterSpacing: ".08em",
-          textTransform: "uppercase",
-        }}
+        style={{ gap: 32, flex: 1, fontWeight: 300, fontSize: 13, letterSpacing: ".08em", textTransform: "uppercase" }}
       >
         {LINKS.map((l) => (
-          <a key={l.href} href={l.href} className="gl-link" style={{ color: "#F5F0EB", textDecoration: "none" }}>
+          <Link key={l.href} href={l.href} className="gl-link" style={{ color: "#F5F0EB", textDecoration: "none" }}>
             {l.label}
-          </a>
+          </Link>
         ))}
       </div>
 
-      {/* Botão menu mobile */}
       <button
         className="gl-nav-toggle"
         onClick={() => setMenu((m) => !m)}
         aria-label="Menu"
-        style={{
-          flex: 1,
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          color: "#F5F0EB",
-          padding: 8,
-          alignItems: "center",
-        }}
+        style={{ flex: 1, background: "none", border: "none", cursor: "pointer", color: "#F5F0EB", padding: 8, alignItems: "center" }}
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
           {menu ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
         </svg>
       </button>
 
-      {/* Logo central */}
-      <a href="#topo" style={{ flex: "0 0 auto", textAlign: "center", textDecoration: "none" }}>
-        <div
-          style={{
-            fontFamily: "var(--font-playfair), serif",
-            fontWeight: 600,
-            fontSize: 26,
-            letterSpacing: ".04em",
-            color: "#C9A86A",
-            lineHeight: 1,
-          }}
-        >
+      <Link href="/" style={{ flex: "0 0 auto", textAlign: "center", textDecoration: "none" }}>
+        <div style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 600, fontSize: 26, letterSpacing: ".04em", color: "#C9A86A", lineHeight: 1 }}>
           Gaspar Lopes
         </div>
-        <div
-          style={{
-            fontWeight: 300,
-            fontSize: 9,
-            letterSpacing: ".42em",
-            textTransform: "uppercase",
-            color: "#F5F0EB",
-            marginTop: 3,
-          }}
-        >
+        <div style={{ fontWeight: 300, fontSize: 9, letterSpacing: ".42em", textTransform: "uppercase", color: "#F5F0EB", marginTop: 3 }}>
           Alfaiataria
         </div>
-      </a>
+      </Link>
 
-      {/* Carrinho */}
       <div style={{ display: "flex", justifyContent: "flex-end", flex: 1 }}>
         <button
           onClick={toggle}
@@ -147,37 +117,18 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Menu mobile (dropdown) */}
       <div
         className={`gl-nav-mobile${menu ? " open" : ""}`}
-        style={{
-          position: "absolute",
-          top: 80,
-          left: 0,
-          right: 0,
-          background: "rgba(13,27,42,0.98)",
-          borderBottom: "1px solid rgba(245,240,235,0.1)",
-          padding: "8px 0",
-        }}
+        style={{ position: "absolute", top: 80, left: 0, right: 0, background: "rgba(13,27,42,0.98)", borderBottom: "1px solid rgba(245,240,235,0.1)", padding: "8px 0" }}
       >
         {LINKS.map((l) => (
-          <a
+          <Link
             key={l.href}
             href={l.href}
-            onClick={() => setMenu(false)}
-            style={{
-              display: "block",
-              padding: "14px clamp(20px,5vw,64px)",
-              color: "#F5F0EB",
-              textDecoration: "none",
-              fontWeight: 300,
-              fontSize: 14,
-              letterSpacing: ".08em",
-              textTransform: "uppercase",
-            }}
+            style={{ display: "block", padding: "14px clamp(20px,5vw,64px)", color: "#F5F0EB", textDecoration: "none", fontWeight: 300, fontSize: 14, letterSpacing: ".08em", textTransform: "uppercase" }}
           >
             {l.label}
-          </a>
+          </Link>
         ))}
       </div>
     </nav>

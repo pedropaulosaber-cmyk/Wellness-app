@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "@/lib/analytics";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
@@ -8,6 +9,7 @@ export default function Newsletter() {
 
   function enviar(e: React.FormEvent) {
     e.preventDefault();
+    track("newsletter_signup", { email });
     setInscrito(true);
     setEmail("");
     setTimeout(() => setInscrito(false), 2500);

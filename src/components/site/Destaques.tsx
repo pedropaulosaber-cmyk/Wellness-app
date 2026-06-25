@@ -1,6 +1,7 @@
 "use client";
 
-import { PRODUTOS } from "@/lib/site-data";
+import Link from "next/link";
+import { PRODUTOS_DESTAQUE } from "@/lib/site-data";
 import { useCart } from "./CartProvider";
 
 export default function Destaques() {
@@ -61,9 +62,12 @@ export default function Destaques() {
         </div>
 
         <div className="gl-grid-3" style={{ gap: "clamp(18px,2.4vw,34px)" }}>
-          {PRODUTOS.map((p) => (
+          {PRODUTOS_DESTAQUE.map((p) => (
             <div key={p.id} style={{ display: "flex", flexDirection: "column" }}>
-              <div style={{ position: "relative", aspectRatio: "3 / 4", overflow: "hidden", background: "#0a121d" }}>
+              <Link
+                href={`/camisas/${p.slug}`}
+                style={{ position: "relative", aspectRatio: "3 / 4", overflow: "hidden", background: "#0a121d", display: "block" }}
+              >
                 <div className="gl-ph" style={{ position: "absolute", inset: 0 }} />
                 <div
                   style={{
@@ -78,7 +82,7 @@ export default function Destaques() {
                     textTransform: "uppercase",
                   }}
                 >
-                  {p.name}
+                  {p.nome}
                 </div>
                 <div
                   style={{
@@ -96,16 +100,19 @@ export default function Destaques() {
                 >
                   {p.tag}
                 </div>
-              </div>
+              </Link>
               <div style={{ paddingTop: 22, display: "flex", flexDirection: "column", flex: 1 }}>
-                <div style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 500, fontSize: 21, color: "#F5F0EB" }}>
-                  {p.name}
-                </div>
+                <Link
+                  href={`/camisas/${p.slug}`}
+                  style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 500, fontSize: 21, color: "#F5F0EB", textDecoration: "none" }}
+                >
+                  {p.nome}
+                </Link>
                 <div style={{ fontWeight: 300, fontSize: 12, letterSpacing: ".05em", color: "rgba(245,240,235,.55)", marginTop: 6 }}>
-                  {p.desc}
+                  {p.descricao}
                 </div>
                 <div style={{ fontWeight: 400, fontSize: 17, letterSpacing: ".04em", color: "#C9A86A", marginTop: 16 }}>
-                  {p.price}
+                  {p.precoLabel}
                 </div>
                 <button
                   onClick={() => add(p)}
