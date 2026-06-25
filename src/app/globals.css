@@ -3,7 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --gl-preto: #0a0a0a;
+  --gl-navy: #0d1b2a;
+  --gl-ouro: #c9a86a;
+  --gl-creme: #f5f0eb;
+  --gl-grafite: #1c1c1c;
+  --font-playfair: "Playfair Display", Georgia, serif;
+  --font-inter: "Inter", system-ui, -apple-system, sans-serif;
 }
 
 html,
@@ -11,46 +17,135 @@ body {
   max-width: 100vw;
   overflow-x: hidden;
 }
-
 body {
-  @apply bg-viva-cream text-viva-900 antialiased;
-  /* App mobile-first: evita zoom acidental de duplo-toque mantendo acessibilidade */
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+  background: var(--gl-preto);
+  color: var(--gl-creme);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+::selection {
+  background: var(--gl-ouro);
+  color: var(--gl-navy);
 }
 
-/* Alvo de toque mínimo (acessibilidade mobile ≥ 44px) */
-@layer components {
-  .toque {
-    @apply min-h-[44px] min-w-[44px];
+@keyframes glFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
   }
-  .btn-primario {
-    @apply toque inline-flex items-center justify-center rounded-xl bg-viva px-5 py-3 font-semibold text-white transition active:scale-[0.98] disabled:opacity-50;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  .btn-secundario {
-    @apply toque inline-flex items-center justify-center rounded-xl border border-viva-200 bg-white px-5 py-3 font-semibold text-viva-700 transition active:scale-[0.98];
+}
+.gl-fade {
+  animation: glFadeUp 1s ease both;
+}
+
+/* Placeholder texturizado (usado em produtos/mídia sem foto) */
+.gl-ph {
+  background-color: #10141c;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.02) 0,
+    rgba(255, 255, 255, 0.02) 1px,
+    transparent 1px,
+    transparent 9px
+  );
+}
+
+/* Link com sublinhado dourado animado */
+.gl-link {
+  position: relative;
+}
+.gl-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 1px;
+  background: var(--gl-ouro);
+  transition: width 0.35s ease;
+}
+.gl-link:hover::after {
+  width: 100%;
+}
+
+/* Cards de categoria — hover */
+.gl-cat:hover .gl-cat-border {
+  opacity: 1;
+}
+.gl-cat:hover .gl-cat-img {
+  transform: scale(1.05);
+}
+
+/* Botões com hover de preenchimento */
+.gl-btn-outline {
+  transition: all 0.35s ease;
+}
+.gl-btn-outline:hover {
+  background: var(--gl-creme);
+  color: var(--gl-navy);
+  border-color: var(--gl-creme) !important;
+}
+.gl-btn-gold {
+  transition: background 0.3s ease;
+}
+.gl-btn-gold:hover {
+  background: var(--gl-creme);
+}
+
+/* ── Grids responsivos ── */
+.gl-grid-colecoes {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+.gl-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.gl-grid-footer {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+
+/* Navbar: desktop x mobile */
+.gl-nav-desktop {
+  display: flex;
+}
+.gl-nav-toggle {
+  display: none;
+}
+.gl-nav-mobile {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .gl-grid-colecoes {
+    grid-template-columns: repeat(2, 1fr);
   }
-  .cartao {
-    @apply rounded-2xl border border-viva-100 bg-white p-4 shadow-sm;
+  .gl-grid-3 {
+    grid-template-columns: 1fr;
   }
-  .campo {
-    @apply toque w-full rounded-xl border border-viva-200 bg-white px-4 py-3 text-base text-viva-900 outline-none transition placeholder:text-viva-300 focus:border-viva focus:ring-2 focus:ring-viva-100;
+  .gl-grid-footer {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
   }
-  .rotulo {
-    @apply mb-1 block text-sm font-medium text-viva-700;
+  .gl-nav-desktop {
+    display: none;
+  }
+  .gl-nav-toggle {
+    display: flex;
+  }
+  .gl-nav-mobile.open {
+    display: block;
   }
 }
 
-@layer utilities {
-  .hero-gradient {
-    background: linear-gradient(150deg, #1f6b4a 0%, #134534 60%, #0d3226 100%);
-  }
-  .texto-degrade {
-    @apply bg-gradient-to-r from-viva-500 to-viva-mint bg-clip-text text-transparent;
-  }
-  .fundo-suave {
-    background:
-      radial-gradient(60% 50% at 50% 0%, rgba(124, 194, 158, 0.18) 0%, rgba(124, 194, 158, 0) 70%),
-      #f7fbf8;
+@media (max-width: 520px) {
+  .gl-grid-footer {
+    grid-template-columns: 1fr;
   }
 }

@@ -1,34 +1,20 @@
-# Vivá
+# Gaspar Lopes Alfaiataria
 
-App de bem-estar **tudo-em-um**: todos os seus treinos (academia, pilates, corrida, bike, funcional, natação) **e** a sua alimentação, num só lugar. Mobile-first, em português.
-
-> **Modelo de negócio:** pagamento **único de R$ 449,90 = acesso VITALÍCIO**. Não é assinatura, não tem mensalidade. Diferencial frente a todos os concorrentes brasileiros, que são por assinatura.
+Site institucional e loja da **Gaspar Lopes Alfaiataria** — alfaiataria clássica brasileira.
+Tradução fiel do design `Gaspar Lopes.dc.html` (Claude Design) para **Next.js 14 + TypeScript**.
 
 ## Stack
 
-- **Next.js 14** (App Router) + **TypeScript** + **Tailwind CSS**
-- **Supabase** (Auth + Postgres) com **Prisma** como ORM
-- PWA instalável (manifest + service worker) — _Fase 2_
-- Tema **branco e verde wellness** (`#1F6B4A`)
+- **Next.js 14** (App Router) + **TypeScript**
+- **Tailwind CSS** (base) + CSS próprio da marca em `globals.css`
+- Fontes **Playfair Display** + **Inter** (Google Fonts)
+- Deploy na **Vercel**
 
-## Como rodar localmente
+## Rodar localmente
 
 ```bash
-# 1. Instale as dependências
 npm install
-
-# 2. Configure o ambiente
-cp .env.example .env
-#   preencha NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY e DATABASE_URL
-
-# 3. (quando houver banco) gere o client e suba o schema
-npm run prisma:generate
-npm run prisma:push
-
-# 4. Rode em desenvolvimento
-npm run dev          # http://localhost:3000
-
-# Build de produção
+npm run dev        # http://localhost:3000
 npm run build && npm start
 ```
 
@@ -37,74 +23,47 @@ npm run build && npm start
 ```
 src/
   app/
-    layout.tsx          # shell mobile-first, pt-BR, tema verde
-    page.tsx            # home com anéis de progresso (calorias/proteína/água)
-    anamnese/           # fluxo de anamnese (placeholder → Fase 4)
-  components/
-    ProgressRing.tsx    # anel de progresso (SVG puro)
+    layout.tsx          # fontes, metadata, provider do carrinho
+    page.tsx            # compõe as seções da landing
+    globals.css         # paleta, hovers, grids responsivos
+  components/site/
+    Navbar.tsx          # fixa, transparência no scroll, menu mobile, carrinho
+    Hero.tsx            # full-bleed
+    Historia.tsx        # marca + vídeo institucional
+    Colecoes.tsx        # grade de categorias
+    Destaques.tsx       # produtos + adicionar ao carrinho
+    Diferenciais.tsx    # valores
+    Depoimentos.tsx
+    Newsletter.tsx
+    Footer.tsx
+    CartDrawer.tsx      # sacola lateral (add/remover/qtd/checkout)
+    CartProvider.tsx    # estado do carrinho (context)
   lib/
-    nutrition.ts        # MOTOR NUTRICIONAL — fonte única (Mifflin-St Jeor → TDEE → macros)
-    prisma.ts           # singleton do Prisma
-    supabase/           # clients browser/server
-prisma/
-  schema.prisma         # Usuario (acesso vitalício), Perfil (anamnese)
-.claude/skills/         # skills do Claude Code para este projeto
+    site-data.ts        # textos, categorias, produtos, preços (edite aqui)
 ```
 
-## Motor nutricional
+## Imagens e vídeo
 
-`src/lib/nutrition.ts` é a **fonte única de verdade** para qualquer cálculo de
-saúde do app. Baseado em Mifflin-St Jeor (BMR) → fator de atividade (TDEE) →
-ajuste por objetivo → macros. Sempre importe destas funções; nunca duplique
-fórmulas. Os valores são estimativas, **não prescrição médica/nutricional**.
+O design referencia fotos (`hero`, categorias) e um vídeo institucional que **não vieram no
+arquivo de design** — os pontos correspondentes usam **placeholders elegantes** por enquanto.
+Para colocar as mídias reais:
 
-## Roteiro de desenvolvimento
+1. Adicione os arquivos em `public/assets/` (ex.: `public/assets/ternos.jpg`).
+2. Em `src/lib/site-data.ts`, preencha `img` (e `pos`) de cada categoria.
+3. Para o vídeo/hero, basta apontar os caminhos nos componentes `Historia.tsx` / `Hero.tsx`.
 
-- [x] **Fase 1 — Fundação**: Next.js + Tailwind + Prisma + Supabase, motor nutricional, home.
-- [x] **Fase 2 — PWA**: manifest, ícones, service worker, "Adicionar à tela inicial".
-- [x] **Fase 3 — Auth + paywall** vitalício de R$ 449,90.
-- [x] **Fase 4 — Anamnese** aprofundada + persistência.
-- [x] **Fase 5 — Plano nutricional + cardápio (TACO)** + registro de refeições.
-- [x] **Fase 6 — Treinos por modalidade + player + progressão de carga.**
-- [x] **Fase 7 — Evolução, streak, conquistas.**
-- [x] **Fase 8 — Integrações** (Apple Health / Google Fit via endpoint de sync).
-- [x] **Fase 9 — Auditoria final mobile + PWA.**
+## Paleta da marca
 
-## Configuração do Supabase
+| Cor | Hex |
+|-----|-----|
+| Preto | `#0A0A0A` |
+| Navy | `#0D1B2A` |
+| Ouro | `#C9A86A` |
+| Creme | `#F5F0EB` |
+| Grafite | `#1C1C1C` |
 
-1. Crie um projeto em [supabase.com](https://supabase.com).
-2. Em **Settings → API**, copie `Project URL` e `anon key` para o `.env`.
-3. Em **Settings → Database**, copie a connection string para `DATABASE_URL`/`DIRECT_URL`.
-4. Aplique o schema: `npm run prisma:push`.
-5. (Recomendado) Aplique as policies de isolamento: cole `prisma/rls.sql` no **SQL Editor**.
-   > Observação: o app acessa o banco via Prisma (conexão privilegiada), então o
-   > isolamento entre contas é garantido **na aplicação** (toda query filtra por
-   > `usuarioId`). O `rls.sql` é defesa em profundidade.
+## Próximos passos (sugestões)
 
-## Pagamento (acesso vitalício)
-
-- Sem `PAGAMENTO_PROVIDER`, roda em **modo simulado** (testa o paywall sem cobrar).
-- Em produção, defina `PAGAMENTO_PROVIDER=asaas`, `PAGAMENTO_API_KEY` e
-  `PAGAMENTO_WEBHOOK_SECRET`, e configure o webhook do gateway para
-  `https://SEU-DOMINIO/api/pagamento/webhook`. Ao confirmar, o usuário recebe
-  `acessoVitalicio = true`.
-
-## Deploy (Vercel)
-
-1. Importe o repositório na [Vercel](https://vercel.com).
-2. Em **Settings → Environment Variables**, adicione todas as variáveis do `.env.example`.
-3. Build Command: `npm run build` (já roda `prisma generate`). Deploy.
-4. Configure o **Redirect URL** do Supabase Auth para `https://SEU-DOMINIO/auth/callback`.
-
-## Como instalar no celular (PWA)
-
-- **iPhone (Safari)**: toque em **Compartilhar** → **Adicionar à Tela de Início**.
-- **Android (Chrome)**: o app oferece o botão **"Instalar o Vivá"**; ou menu **⋮ → Instalar app**.
-- Após instalar, o Vivá abre em tela cheia (standalone) e funciona offline nas telas já visitadas.
-
-## Conectar Apple Saúde / Google Fit
-
-Em **Perfil → Apps e wearables**, gere o token e use o endpoint exibido num
-**Atalho do iOS** (lê passos/FC e faz POST) ou num job do **Health Connect**
-(Android). Sincronização nativa em tempo real exige empacotar como app
-(Capacitor) — a arquitetura (`/api/integracoes/importar`) já está pronta.
+- Página de catálogo (`/catalogo`) — os cards de categoria já apontam para `/catalogo?cat=...`
+- Mídias reais (fotos + vídeo institucional)
+- Checkout/pagamento real
