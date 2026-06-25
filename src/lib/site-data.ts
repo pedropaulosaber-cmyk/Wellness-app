@@ -190,3 +190,17 @@ export const CORES = {
   creme: "#F5F0EB",
   grafite: "#1c1c1c",
 };
+
+// ── Nossa História (página dedicada /historia) ───────────────
+export const HISTORIA = {
+  titulo: "Da Máquina de Costura à Alfaiataria que se Tornou Referência",
+  paragrafos: [
+    "A trajetória da Gaspar Lopes começa dentro de um ambiente onde a costura era parte da rotina e da cultura familiar. Crescer entre máquinas, tecidos e processos artesanais despertou, desde cedo, a essência que hoje define a marca: respeito ao feito à mão, atenção ao detalhe e compromisso com a qualidade.",
+    "Com formação na área e anos de aprimoramento, o passo natural foi transformar essa herança em negócio. A marca nasceu de forma simples, mas com visão clara. A primeira estrutura foi montada na sala de um apartamento, onde moldes, máquinas e muita vontade de construir algo sólido deram início ao que se tornaria uma referência em alfaiataria. Assim como muitas grandes empresas que começaram em uma garagem, acreditávamos que esforço e propósito eram suficientes para expandir.",
+    "Antes de consolidar a marca, foram anos de contato direto com clientes, vendendo gravatas de porta em porta e entendendo na prática o que realmente importava para quem buscava elegância e personalidade. Esse período trouxe o maior aprendizado da nossa história: a importância de ouvir. Foi ouvindo que identificamos o desejo crescente por peças exclusivas e pela experiência do sob medida.",
+    "Começamos com pronta entrega, mas evoluímos rapidamente para o trabalho 100% personalizado, acompanhando a demanda de um público que buscava roupas que comunicassem identidade, estilo e precisão. Assim nasceu o conceito que nos define até hoje: vestir pessoas com peças criadas para cada corpo, cada necessidade e cada momento.",
+    "Hoje, com mais de 30 anos de experiência no mercado e 15 anos no mesmo endereço, a Gaspar Lopes se consolidou como referência em alfaiataria sob medida. Crescemos, aperfeiçoamos técnicas e fortalecemos nossa presença, mas mantivemos intactos os valores que moldaram nossa história: ética, qualidade, pontualidade e o cuidado em cada etapa do processo.",
+    "Acreditamos que excelência não é diferencial, é obrigação. E é por isso que, ao longo dos anos, construímos uma marca que une tradição, técnica e autenticidade.",
+    "A Gaspar Lopes continua evoluindo, ampliando horizontes e escrevendo diariamente sua própria história — costura por costura, escolha por escolha, sempre com o compromisso de entregar o melhor.",
+  ],
+};
