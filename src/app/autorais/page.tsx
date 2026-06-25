@@ -7,7 +7,13 @@ export default function AutoraisPage() {
   return (
     <main style={{ minHeight: "100dvh", background: "#0A0A0A", padding: "112px clamp(20px,5vw,64px) clamp(72px,11vw,120px)" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <header style={{ textAlign: "center", maxWidth: 720, margin: "0 auto clamp(40px,6vw,64px)" }}>
+        <Link
+          href="/"
+          style={{ display: "inline-flex", alignItems: "center", gap: 8, fontWeight: 300, fontSize: 13, letterSpacing: ".06em", color: "rgba(245,240,235,.65)", textDecoration: "none" }}
+        >
+          ← Voltar ao menu
+        </Link>
+        <header style={{ textAlign: "center", maxWidth: 720, margin: "20px auto clamp(40px,6vw,64px)" }}>
           <div style={{ fontWeight: 300, fontSize: 11, letterSpacing: ".3em", textTransform: "uppercase", color: "#C9A86A", marginBottom: 16 }}>Atelier</div>
           <h1 style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 500, fontSize: "clamp(30px,4vw,52px)", lineHeight: 1.12, color: "#F5F0EB" }}>
             Peças Autorais

@@ -57,9 +57,9 @@ export default function Hero() {
             letterSpacing: ".01em",
           }}
         >
-          A elegância que define
+          A sua referência
           <br />
-          quem você é.
+          em Alfaiataria.
         </h1>
         <p
           style={{
