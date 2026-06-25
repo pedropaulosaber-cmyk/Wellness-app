@@ -1,9 +1,15 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Produto } from "@/lib/site-data";
+import { track } from "@/lib/analytics";
 
-interface ItemCarrinho extends Produto {
+export interface ItemCarrinho {
+  id: string;
+  slug: string;
+  nome: string;
+  precoCentavos: number;
+  precoLabel: string;
   qty: number;
 }
 
@@ -11,62 +17,82 @@ interface CartCtx {
   cart: ItemCarrinho[];
   open: boolean;
   count: number;
+  subtotalCentavos: number;
   subtotal: string;
-  checkingOut: boolean;
   add: (p: Produto) => void;
   inc: (id: string) => void;
   dec: (id: string) => void;
   remove: (id: string) => void;
   toggle: () => void;
-  checkout: () => void;
+  abrir: () => void;
+  fechar: () => void;
+  limpar: () => void;
 }
 
 const Ctx = createContext<CartCtx | null>(null);
+const KEY = "gl_cart";
 
-function precoNum(p: string) {
-  return Number(p.replace(/[^\d]/g, ""));
-}
-function fmt(n: number) {
-  return "R$ " + n.toLocaleString("pt-BR");
+function brl(centavos: number) {
+  return "R$ " + (centavos / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<ItemCarrinho[]>([]);
   const [open, setOpen] = useState(false);
-  const [checkingOut, setCheckingOut] = useState(false);
+  const carregado = useRef(false);
+
+  // Carrega do localStorage uma vez
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(KEY);
+      if (raw) setCart(JSON.parse(raw) as ItemCarrinho[]);
+    } catch {
+      /* ignore */
+    }
+    carregado.current = true;
+  }, []);
+
+  // Persiste a cada mudança (após o carregamento inicial)
+  useEffect(() => {
+    if (!carregado.current) return;
+    try {
+      window.localStorage.setItem(KEY, JSON.stringify(cart));
+    } catch {
+      /* ignore */
+    }
+  }, [cart]);
 
   const valor = useMemo<CartCtx>(() => {
     const count = cart.reduce((a, i) => a + i.qty, 0);
-    const subtotalNum = cart.reduce((a, i) => a + precoNum(i.price) * i.qty, 0);
+    const subtotalCentavos = cart.reduce((a, i) => a + i.precoCentavos * i.qty, 0);
     return {
       cart,
       open,
       count,
-      subtotal: fmt(subtotalNum),
-      checkingOut,
-      add: (p) =>
+      subtotalCentavos,
+      subtotal: brl(subtotalCentavos),
+      add: (p) => {
         setCart((c) => {
           const ex = c.find((i) => i.id === p.id);
-          setOpen(true);
           return ex
             ? c.map((i) => (i.id === p.id ? { ...i, qty: i.qty + 1 } : i))
-            : [...c, { ...p, qty: 1 }];
-        }),
+            : [
+                ...c,
+                { id: p.id, slug: p.slug, nome: p.nome, precoCentavos: p.precoCentavos, precoLabel: p.precoLabel, qty: 1 },
+              ];
+        });
+        setOpen(true);
+        track("add_to_cart", { id: p.id, nome: p.nome, preco_centavos: p.precoCentavos });
+      },
       inc: (id) => setCart((c) => c.map((i) => (i.id === id ? { ...i, qty: i.qty + 1 } : i))),
-      dec: (id) =>
-        setCart((c) => c.map((i) => (i.id === id ? { ...i, qty: Math.max(1, i.qty - 1) } : i))),
+      dec: (id) => setCart((c) => c.map((i) => (i.id === id ? { ...i, qty: Math.max(1, i.qty - 1) } : i))),
       remove: (id) => setCart((c) => c.filter((i) => i.id !== id)),
       toggle: () => setOpen((o) => !o),
-      checkout: () => {
-        setCheckingOut(true);
-        setTimeout(() => {
-          setCheckingOut(false);
-          setCart([]);
-          setOpen(false);
-        }, 1600);
-      },
+      abrir: () => setOpen(true),
+      fechar: () => setOpen(false),
+      limpar: () => setCart([]),
     };
-  }, [cart, open, checkingOut]);
+  }, [cart, open]);
 
   return <Ctx.Provider value={valor}>{children}</Ctx.Provider>;
 }
