@@ -1,21 +1,15 @@
 {
-  "name": "viva",
+  "name": "gaspar-lopes",
   "version": "0.1.0",
   "private": true,
-  "description": "Vivá — app de bem-estar tudo-em-um (treinos + nutrição). Acesso vitalício.",
+  "description": "Gaspar Lopes Alfaiataria — site institucional e loja.",
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "prisma:generate": "prisma generate",
-    "prisma:push": "prisma db push",
-    "prisma:studio": "prisma studio"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@prisma/client": "^5.20.0",
-    "@supabase/ssr": "^0.5.1",
-    "@supabase/supabase-js": "^2.45.4",
     "next": "^14.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -28,7 +22,6 @@
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.35",
     "postcss": "^8.5.15",
-    "prisma": "^5.20.0",
     "tailwindcss": "^3.4.13",
     "typescript": "^5.6.3"
   }
