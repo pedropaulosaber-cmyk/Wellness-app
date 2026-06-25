@@ -13,15 +13,17 @@ export default function Hero() {
         overflow: "hidden",
       }}
     >
-      {/* Placeholder do hero (substitua por /assets/hero.jpg) */}
-      <div
-        className="gl-ph"
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/assets/hero.jpg"
+        alt="Gaspar Lopes Alfaiataria — alfaiataria sob medida"
         style={{
           position: "absolute",
           inset: 0,
-          backgroundColor: "#0d1119",
-          backgroundImage:
-            "radial-gradient(120% 120% at 75% 30%, rgba(201,168,106,0.18) 0%, rgba(13,27,42,0) 55%)",
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center 25%",
         }}
       />
       <div
@@ -29,7 +31,7 @@ export default function Hero() {
           position: "absolute",
           inset: 0,
           background:
-            "linear-gradient(90deg,rgba(10,10,10,.9) 0%,rgba(10,10,10,.5) 45%,rgba(10,10,10,.1) 70%),linear-gradient(180deg,transparent 60%,rgba(10,10,10,.7) 100%)",
+            "linear-gradient(90deg,rgba(10,10,10,.92) 0%,rgba(10,10,10,.55) 45%,rgba(10,10,10,.15) 72%),linear-gradient(180deg,transparent 55%,rgba(10,10,10,.75) 100%)",
         }}
       />
       <div
